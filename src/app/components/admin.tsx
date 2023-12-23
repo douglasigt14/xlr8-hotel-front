@@ -8,7 +8,7 @@ import PaidIcon from '@mui/icons-material/Paid';
 import HotelAdmin from './hotelAdmin';
 
 
-const Main: FC = () => {
+const Admin: FC = () => {
   const [loadding, setLoading] = useState(false);
   const [value, setValue] = useState(0);
   
@@ -45,4 +45,4 @@ const Main: FC = () => {
   );
 };
 
-export default Main;
+export default Admin;
