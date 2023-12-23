@@ -3,7 +3,9 @@
 import React, { FC, useState, useEffect } from 'react';
 import TableBasic from './table';
 import { Box, Button, FormControl, Grid, Input, InputAdornment, Modal, Skeleton, TextField, Typography } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 const styleModal = {
   position: 'absolute' as 'absolute',
@@ -20,7 +22,7 @@ const styleModal = {
 
 const HotelAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
-  const labelsHeader = ["Nome", "Endereço", "Imagem","Editar","Apagar"];
+  const labelsHeader = ["Nome", "Endereço", "Imagem", "Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = React.useState(false);
 
@@ -38,6 +40,11 @@ const HotelAdmin: FC = () => {
       try {
         const response = await fetch(URL);
         const data = await response.json();
+
+        data.forEach( item => {
+          item.buttom_edit = <Button size="small" variant="contained"><EditIcon></EditIcon> </Button>;
+          item.buttom_delete = <Button size="small" variant="contained"><DeleteIcon></DeleteIcon> </Button>;
+        });
         setLoading(false);
         setHotels(data);
       } catch (error) {
@@ -48,31 +55,59 @@ const HotelAdmin: FC = () => {
     fetchHotels();
   }, []);
 
-  
+
+  const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+	
+    alert("Submit");
+
+		/* try {
+			const response = await fetch('http://localhost:8080/api/singup', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(formData),
+			});
+
+			if (!response.ok) {
+				alertError();
+				throw new Error('Erro ao enviar inscrição');
+			}
+
+			alertSucess();
+		} catch (error) {
+			alertError();
+		}finally {
+			router.push('/');
+		  } */
+	};
+
+
   let result = (loadding ? <Skeleton
     variant="rectangular"
     width="100%"
     height={500}
   /> :
     <div className="content">
-      
-       <div className='content-header'>
+
+      <div className='content-header'>
         <div>
-            <Typography variant="h5">Lista de Hoteis</Typography>
+          <Typography variant="h5">Lista de Hoteis</Typography>
         </div>
         <div>
-            <Button onClick={handleOpen} variant="contained">+</Button>
+          <Button onClick={handleOpen} variant="contained">+</Button>
         </div>
-       </div>
-       <div className='content-table'>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-                <TableBasic  labelsHeader={labelsHeader} data={hotels}></TableBasic>
-            </Grid>
+      </div>
+      <div className='content-table'>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TableBasic labelsHeader={labelsHeader} data={hotels}></TableBasic>
           </Grid>
-           
-       </div>
-       <Modal
+        </Grid>
+
+      </div>
+      <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
@@ -80,48 +115,59 @@ const HotelAdmin: FC = () => {
       >
         <Box sx={styleModal}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Inserir 
+            Inserir
           </Typography>
-          <div className='body-modal'>
-            <FormControl fullWidth>
-              <Grid container spacing={2} 
-                    justifyContent="center"
-                    alignItems="center">
+            <form onSubmit={handleSubmit} className='body-modal'>
+              <FormControl fullWidth>
+              <Grid container spacing={2}
+                justifyContent="center"
+                alignItems="center">
                 <Grid item xs={6}>
-                        <TextField id="outlined-basic" name="name" label="Nome" variant="outlined" fullWidth/>
+                  <TextField required name="name" label="Nome" variant="outlined" fullWidth />
                 </Grid>
                 <Grid item xs={6}>
-                      <TextField id="outlined-basic" name="location" label="Endereço" variant="outlined" fullWidth/>
+                  <TextField required name="location" label="Endereço" variant="outlined" fullWidth />
                 </Grid>
               </Grid>
 
 
-              <Grid container spacing={2} 
-                    justifyContent="center"
-                    alignItems="center">
+              <Grid container spacing={2}
+                justifyContent="center"
+                alignItems="center">
                 <Grid item xs={12}>
-                    <TextField
-                      type="file"
-                      label="Imagem"
-                      onChange={handleFileUpload}
-                      variant="outlined"
-                      fullWidth
-                      margin="normal"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      inputProps={{
-                        accept: 'image/*', // Aceita todos os tipos de imagens
-                      }}
-                    />
-                  </Grid>
+                  <TextField
+                    type="file"
+                    label="Imagem"
+                    onChange={handleFileUpload}
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    inputProps={{
+                      accept: 'image/*', // Aceita todos os tipos de imagens
+                    }}
+                  />
+                </Grid>
               </Grid>
-            </FormControl>
-          </div>
+              <br /><br />
+              <Grid container spacing={2}
+                justifyContent="space-around"
+                alignItems="end">
+                  <Grid item xs={4}>
+                      <Button onClick={() => { setOpen(false)}} fullWidth variant="text">Cancelar</Button>
+                </Grid>
+                  <Grid item xs={4}>
+                      <Button onClick={handleOpen} type="submit" fullWidth variant="contained">Salvar</Button>
+                </Grid>
+              </Grid>
+              </FormControl>
+            </form>
         </Box>
       </Modal>
     </div>
-    );
+  );
   return (
     result
   );
