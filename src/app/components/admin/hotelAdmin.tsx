@@ -102,8 +102,8 @@ const HotelAdmin: FC = () => {
         alertError('Erro ao fazer a request');
         throw new Error('Erro ao fazer a request');
       }
-
-      alertSucess('Sucesso');
+      const data = await response.json();
+      alertSucess(data.msg);
       show();
     } catch (error) {
       alertError('Erro ao fazer a request');
@@ -127,8 +127,8 @@ const HotelAdmin: FC = () => {
         alertError('Erro ao fazer a request');
         throw new Error('Erro ao fazer a request');
       }
-
-      alertWarning('Hotel apagado');
+      const data = await response.json();
+      alertWarning(data.msg);
       show();
     } catch (error) {
       alertError('Erro ao fazer a request');
