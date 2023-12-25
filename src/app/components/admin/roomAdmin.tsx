@@ -20,9 +20,9 @@ const styleModal = {
   p: 4,
 };
 
-const HotelAdmin: FC = () => {
+const RoomAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
-  const labelsHeader = ["#", "Nome", "Endereço", "Imagem", "Editar", "Apagar"];
+  const labelsHeader = ["#", "Tipo", "Nº de Quartos", "Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = useState({
@@ -40,37 +40,39 @@ const HotelAdmin: FC = () => {
   }, []);
 
   const show = () => {
-    const URL = 'http://localhost:8081/api/hotels';
+    const URL = 'http://localhost:8081/api/rooms';
     const fetchRequest = async () => {
       try {
         const response = await fetch(URL);
         const data = await response.json();
 
-        data.forEach(item => {
-          item.buttom_edit = 
-          <Button 
-          onClick={() => {
-            handleOpen();
-            setFormData({
-              id: item.id,
-              name: item.name,
-              location: item.location,
-              image_url: ''
-            });
-            setTitleModal("Editar");
-          }}
-          size="small" 
-          variant="contained">
-            <EditIcon></EditIcon> 
-          </Button>;
+        data.forEach(hotel => {
+          hotel.rooms.forEach(item => {
+            item.buttom_edit =
+              <Button
+                onClick={() => {
+                  handleOpen();
+                  setFormData({
+                    id: item.id,
+                    name: item.name,
+                    location: item.location,
+                    image_url: ''
+                  });
+                  setTitleModal("Editar");
+                }}
+                size="small"
+                variant="contained">
+                <EditIcon></EditIcon>
+              </Button>;
 
-          item.buttom_delete = <Button onClick={() => {
-            deleteForId(item.id);
-          }}
-            size="small"
-            variant="contained">
-            <DeleteIcon></DeleteIcon>
-          </Button>;
+            item.buttom_delete = <Button onClick={() => {
+              deleteForId(item.id);
+            }}
+              size="small"
+              variant="contained">
+              <DeleteIcon></DeleteIcon>
+            </Button>;
+          });
         });
         setLoading(false);
         setHotels(data);
@@ -84,9 +86,9 @@ const HotelAdmin: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
- 
 
-    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/hotels' : 'http://localhost:8081/api/hotels/'+formData.id;
+
+    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/rooms' : 'http://localhost:8081/api/rooms/' + formData.id;
     let METHOD = titleModal == "Inserir" ? 'POST' : 'PUT';
 
     try {
@@ -115,7 +117,7 @@ const HotelAdmin: FC = () => {
 
   const deleteForId = async (id) => {
     try {
-      const response = await fetch('http://localhost:8081/api/hotels/' + id, {
+      const response = await fetch('http://localhost:8081/api/rooms/' + id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -174,26 +176,31 @@ const HotelAdmin: FC = () => {
     height={500}
   /> :
     <div className="content">
+      <Typography variant="h4">Lista de Quartos</Typography>
+      {hotels.map((hotel, index) =>
+      (
+        <div key={index}>
+          <div className='content-header'>
+            <div>
+              <Typography variant="h5">{hotel.name}</Typography>
+            </div>
+            <div>
+              <Button onClick={() => {
+                handleOpen();
+                setTitleModal("Inserir");
+              }} variant="contained">+</Button>
+            </div>
+          </div>
+          <div className='content-table'>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TableBasic labelsHeader={labelsHeader} data={hotel.rooms}></TableBasic>
+              </Grid>
+            </Grid>
 
-      <div className='content-header'>
-        <div>
-          <Typography variant="h5">Lista de Hoteis</Typography>
+          </div>
         </div>
-        <div>
-          <Button onClick={() => {
-            handleOpen();
-            setTitleModal("Inserir");
-          }} variant="contained">+</Button>
-        </div>
-      </div>
-      <div className='content-table'>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TableBasic labelsHeader={labelsHeader} data={hotels}></TableBasic>
-          </Grid>
-        </Grid>
-
-      </div>
+      ))}
 
 
       {/* Modal Inserir */}
@@ -265,4 +272,4 @@ const HotelAdmin: FC = () => {
   );
 };
 
-export default HotelAdmin;
+export default RoomAdmin;
