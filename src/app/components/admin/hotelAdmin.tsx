@@ -26,6 +26,7 @@ const HotelAdmin: FC = () => {
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = useState({
+    id: null,
     name: '',
     location: '',
     image_url: ''
@@ -50,6 +51,12 @@ const HotelAdmin: FC = () => {
           <Button 
           onClick={() => {
             handleOpen();
+            setFormData({
+              id: item.id,
+              name: item.name,
+              location: item.location,
+              image_url: ''
+            });
             setTitleModal("Editar");
           }}
           size="small" 
@@ -77,10 +84,14 @@ const HotelAdmin: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+ 
+
+    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/hotels' : 'http://localhost:8081/api/hotels/'+formData.id;
+    let METHOD = titleModal == "Inserir" ? 'POST' : 'PUT';
 
     try {
-      const response = await fetch('http://localhost:8081/api/hotels', {
-        method: 'POST',
+      const response = await fetch(URL, {
+        method: METHOD,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -92,7 +103,7 @@ const HotelAdmin: FC = () => {
         throw new Error('Erro ao fazer a request');
       }
 
-      alertSucess('Hotel Cadastrado');
+      alertSucess('Sucesso');
       show();
     } catch (error) {
       alertError('Erro ao fazer a request');
@@ -130,6 +141,7 @@ const HotelAdmin: FC = () => {
   const clear = () => {
     setOpen(false);
     setFormData({
+      id: null,
       name: '',
       location: '',
       image_url: ''
