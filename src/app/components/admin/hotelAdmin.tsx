@@ -5,7 +5,7 @@ import TableBasic from '../table';
 import { Box, Button, FormControl, Grid, Input, InputAdornment, Modal, Skeleton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-
+import {alertError,alertSucess} from "../alerts"; 
 
 const styleModal = {
   position: 'absolute' as 'absolute',
@@ -28,16 +28,27 @@ const HotelAdmin: FC = () => {
   const [formData, setFormData] = useState({
 		name: '',
 		location: '',
-		image: ''
+		image_url: null
 	});
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleFileUpload = (event) => {
+  /* const handleFileUpload = (event) => {
     const file = event.target.files[0];
     // Faça o que quiser com o arquivo, como enviá-lo para o servidor ou exibir uma visualização
-  };
+  }; */
+
+  const handleChange = (e) => {
+		const { name, value } = e.target;
+		const updatedValue = value;
+    
+		setFormData((prevData) => ({
+			...prevData,
+			[name]: updatedValue,
+		}));
+    console.log(formData);
+	};
 
   useEffect(() => {
     const URL = 'http://localhost:8081/api/hotels';
@@ -63,11 +74,9 @@ const HotelAdmin: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-	
-    alert("Submit");
 
-		/* try {
-			const response = await fetch('http://localhost:8080/api/singup', {
+		try {
+			const response = await fetch('http://localhost:8081/api/hotels', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -76,17 +85,27 @@ const HotelAdmin: FC = () => {
 			});
 
 			if (!response.ok) {
-				alertError();
-				throw new Error('Erro ao enviar inscrição');
+				alertError('Erro ao fazer a request');
+				throw new Error('Erro ao fazer a request');
 			}
 
-			alertSucess();
+			alertSucess('Hotel Cadastrado');
 		} catch (error) {
-			alertError();
+			alertError('Erro ao fazer a request');
+      
 		}finally {
-			router.push('/');
-		  } */
+      clear();
+		  }
 	};
+
+  const clear = () => {
+    setOpen(false);
+    setFormData({
+      name: '',
+      location: '',
+      image_url: null
+    });
+  }
 
 
   let result = (loadding ? <Skeleton
@@ -131,10 +150,10 @@ const HotelAdmin: FC = () => {
                 justifyContent="center"
                 alignItems="center">
                 <Grid item xs={6}>
-                  <TextField required name="name" value={formData.name} label="Nome" variant="outlined" fullWidth />
+                  <TextField onChange={handleChange} required name="name" value={formData.name} label="Nome" variant="outlined" fullWidth />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField required name="location" value={formData.location} label="Endereço" variant="outlined" fullWidth />
+                  <TextField onChange={handleChange} required name="location" value={formData.location} label="Endereço" variant="outlined" fullWidth />
                 </Grid>
               </Grid>
 
@@ -146,7 +165,8 @@ const HotelAdmin: FC = () => {
                   <TextField
                     type="file"
                     label="Imagem"
-                    onChange={handleFileUpload}
+                    name="image_url"
+                    onChange={handleChange}
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -156,7 +176,7 @@ const HotelAdmin: FC = () => {
                     inputProps={{
                       accept: 'image/*', // Aceita todos os tipos de imagens
                     }}
-                    value={formData.image}
+                    value={formData.image_url}
                   />
                 </Grid>
               </Grid>
