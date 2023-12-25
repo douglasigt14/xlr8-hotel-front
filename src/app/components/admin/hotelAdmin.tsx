@@ -5,7 +5,7 @@ import TableBasic from '../table';
 import { Box, Button, FormControl, Grid, Input, InputAdornment, Modal, Skeleton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import {alertError,alertSucess} from "../alerts"; 
+import { alertError, alertSucess, alertWarning } from "../alerts";
 
 const styleModal = {
   position: 'absolute' as 'absolute',
@@ -22,44 +22,48 @@ const styleModal = {
 
 const HotelAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
-  const labelsHeader = ["Nome", "Endereço", "Imagem", "Editar", "Apagar"];
+  const labelsHeader = ["#", "Nome", "Endereço", "Imagem", "Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = useState({
-		name: '',
-		location: '',
-		image_url: null
-	});
+    name: '',
+    location: '',
+    image_url: ''
+  });
+  const [titleModal, setTitleModal] = useState("Inserir");
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
-  /* const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    // Faça o que quiser com o arquivo, como enviá-lo para o servidor ou exibir uma visualização
-  }; */
-
-  const handleChange = (e) => {
-		const { name, value } = e.target;
-		const updatedValue = value;
-    
-		setFormData((prevData) => ({
-			...prevData,
-			[name]: updatedValue,
-		}));
-    console.log(formData);
-	};
 
   useEffect(() => {
+    show();
+  }, []);
+
+  const show = () => {
     const URL = 'http://localhost:8081/api/hotels';
     const fetchHotels = async () => {
       try {
         const response = await fetch(URL);
         const data = await response.json();
 
-        data.forEach( item => {
-          item.buttom_edit = <Button size="small" variant="contained"><EditIcon></EditIcon> </Button>;
-          item.buttom_delete = <Button size="small" variant="contained"><DeleteIcon></DeleteIcon> </Button>;
+        data.forEach(item => {
+          item.buttom_edit = 
+          <Button 
+          onClick={() => {
+            handleOpen();
+            setTitleModal("Editar");
+          }}
+          size="small" 
+          variant="contained">
+            <EditIcon></EditIcon> 
+          </Button>;
+
+          item.buttom_delete = <Button onClick={() => {
+            deleteForId(item.id);
+          }}
+            size="small"
+            variant="contained">
+            <DeleteIcon></DeleteIcon>
+          </Button>;
         });
         setLoading(false);
         setHotels(data);
@@ -69,43 +73,87 @@ const HotelAdmin: FC = () => {
     };
 
     fetchHotels();
-  }, []);
-
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+    e.preventDefault();
 
-		try {
-			const response = await fetch('http://localhost:8081/api/hotels', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(formData),
-			});
+    try {
+      const response = await fetch('http://localhost:8081/api/hotels', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-			if (!response.ok) {
-				alertError('Erro ao fazer a request');
-				throw new Error('Erro ao fazer a request');
-			}
+      if (!response.ok) {
+        alertError('Erro ao fazer a request');
+        throw new Error('Erro ao fazer a request');
+      }
 
-			alertSucess('Hotel Cadastrado');
-		} catch (error) {
-			alertError('Erro ao fazer a request');
-      
-		}finally {
+      alertSucess('Hotel Cadastrado');
+      show();
+    } catch (error) {
+      alertError('Erro ao fazer a request');
+
+    } finally {
       clear();
-		  }
-	};
+    }
+  };
+
+  const deleteForId = async (id) => {
+    try {
+      const response = await fetch('http://localhost:8081/api/hotels/' + id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        alertError('Erro ao fazer a request');
+        throw new Error('Erro ao fazer a request');
+      }
+
+      alertWarning('Hotel apagado');
+      show();
+    } catch (error) {
+      alertError('Erro ao fazer a request');
+
+    } finally {
+      clear();
+    }
+  }
 
   const clear = () => {
     setOpen(false);
     setFormData({
       name: '',
       location: '',
-      image_url: null
+      image_url: ''
     });
   }
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false)
+    clear();
+  };
+
+  const handleChange = (e) => {
+
+    const { name, value } = e.target;
+
+    //const file = event.target.files[0];
+    const updatedValue = value;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: updatedValue,
+    }));
+  };
 
 
   let result = (loadding ? <Skeleton
@@ -120,7 +168,10 @@ const HotelAdmin: FC = () => {
           <Typography variant="h5">Lista de Hoteis</Typography>
         </div>
         <div>
-          <Button onClick={handleOpen} variant="contained">+</Button>
+          <Button onClick={() => {
+            handleOpen();
+            setTitleModal("Inserir");
+          }} variant="contained">+</Button>
         </div>
       </div>
       <div className='content-table'>
@@ -142,10 +193,10 @@ const HotelAdmin: FC = () => {
       >
         <Box sx={styleModal}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Inserir
+            {titleModal}
           </Typography>
-            <form onSubmit={handleSubmit} className='body-modal'>
-              <FormControl fullWidth>
+          <form onSubmit={handleSubmit} className='body-modal'>
+            <FormControl fullWidth>
               <Grid container spacing={2}
                 justifyContent="center"
                 alignItems="center">
@@ -184,15 +235,15 @@ const HotelAdmin: FC = () => {
               <Grid container spacing={2}
                 justifyContent="space-around"
                 alignItems="end">
-                  <Grid item xs={4}>
-                      <Button onClick={() => { setOpen(false)}} fullWidth variant="text">Cancelar</Button>
+                <Grid item xs={4}>
+                  <Button onClick={() => { setOpen(false) }} fullWidth variant="text">Cancelar</Button>
                 </Grid>
-                  <Grid item xs={4}>
-                      <Button onClick={handleOpen} type="submit" fullWidth variant="contained">Salvar</Button>
+                <Grid item xs={4}>
+                  <Button onClick={handleOpen} type="submit" fullWidth variant="contained">Salvar</Button>
                 </Grid>
               </Grid>
-              </FormControl>
-            </form>
+            </FormControl>
+          </form>
         </Box>
       </Modal>
     </div>
