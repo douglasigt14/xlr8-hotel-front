@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC, useState, useEffect } from 'react';
-import TableBasic from './table';
+import TableBasic from '../table';
 import { Box, Button, FormControl, Grid, Input, InputAdornment, Modal, Skeleton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -25,6 +25,11 @@ const HotelAdmin: FC = () => {
   const labelsHeader = ["Nome", "Endereço", "Imagem", "Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [formData, setFormData] = useState({
+		name: '',
+		location: '',
+		image: ''
+	});
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -107,6 +112,9 @@ const HotelAdmin: FC = () => {
         </Grid>
 
       </div>
+
+
+      {/* Modal Inserir */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -123,10 +131,10 @@ const HotelAdmin: FC = () => {
                 justifyContent="center"
                 alignItems="center">
                 <Grid item xs={6}>
-                  <TextField required name="name" label="Nome" variant="outlined" fullWidth />
+                  <TextField required name="name" value={formData.name} label="Nome" variant="outlined" fullWidth />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField required name="location" label="Endereço" variant="outlined" fullWidth />
+                  <TextField required name="location" value={formData.location} label="Endereço" variant="outlined" fullWidth />
                 </Grid>
               </Grid>
 
@@ -148,6 +156,7 @@ const HotelAdmin: FC = () => {
                     inputProps={{
                       accept: 'image/*', // Aceita todos os tipos de imagens
                     }}
+                    value={formData.image}
                   />
                 </Grid>
               </Grid>

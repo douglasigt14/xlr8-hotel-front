@@ -1,5 +1,5 @@
 import React from 'react'
-import Admin from '../components/admin'
+import Admin from '../components/admin/admin'
 
 export default function Home() {
   return (
