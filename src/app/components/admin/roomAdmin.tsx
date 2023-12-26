@@ -73,7 +73,7 @@ const RoomAdmin: FC = () => {
         setLoading(false);
         setHotels(data);
       } catch (error) {
-        alertError(error);
+        //alertError(error);
       }
     };
 
@@ -184,7 +184,7 @@ const RoomAdmin: FC = () => {
         <div key={index}>
           <div className='content-header'>
             <div>
-              <Typography variant="h5">{hotel.name}</Typography>
+              <Typography variant="h5"><b>{hotel.name}</b></Typography>
             </div>
             <div>
               <Button onClick={() => {
@@ -206,7 +206,7 @@ const RoomAdmin: FC = () => {
               </Grid>
             </Grid>
 
-          </div>) : (<p>Nada</p>) 
+          </div>) : (<p><i>*Nenhum Tipo de Quarto Cadastrado</i></p>) 
           }
           
         </div>

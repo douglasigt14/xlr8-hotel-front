@@ -74,7 +74,7 @@ const PriceAdmin: FC = () => {
         setLoading(false);
         setHotels(data);
       } catch (error) {
-        alertError(error);
+        //alertError(error);
       }
     };
 
@@ -182,9 +182,12 @@ const PriceAdmin: FC = () => {
      <Typography variant="h4">Preços</Typography>
      <br/>
       {hotels.map((hotel, index) => (
+          hotel.rooms.length > 0 ? 
         <div key={index}>
            <Typography variant="h5"><b>{hotel.name}</b></Typography>
           {hotel.rooms.map((room, roomIndex) => (
+
+          
             <div key={roomIndex}>
               <div className='content-header'>
                 <div>
@@ -215,8 +218,10 @@ const PriceAdmin: FC = () => {
                 )
               }
             </div>
+          
           ))}
         </div>
+          : null
       ))}
 
 

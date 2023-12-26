@@ -63,7 +63,7 @@ const HotelAdmin: FC = () => {
         setLoading(false);
         setHotels(data);
       } catch (error) {
-        alertError(error);
+        //alertError(error);
       }
     };
 
