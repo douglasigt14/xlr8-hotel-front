@@ -22,14 +22,14 @@ const styleModal = {
 
 const RoomAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
-  const labelsHeader = ["#", "Tipo", "Nº de Quartos", "Editar", "Apagar"];
+  const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos", "Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = useState({
     id: null,
-    name: '',
-    location: '',
-    image_url: ''
+    room_type: '',
+    number_of_rooms: '',
+    hotel_id: null
   });
   const [titleModal, setTitleModal] = useState("Inserir");
 
@@ -48,36 +48,42 @@ const RoomAdmin: FC = () => {
 
         data.forEach(hotel => {
           hotel.rooms.forEach(item => {
-            item.buttom_edit =
+            item.buttom_edit = (
               <Button
                 onClick={() => {
                   handleOpen();
                   setFormData({
                     id: item.id,
-                    name: item.name,
-                    location: item.location,
-                    image_url: ''
+                    room_type: item.room_type,
+                    number_of_rooms: item.number_of_rooms,
+                    hotel_id: hotel.hotel_id
                   });
                   setTitleModal("Editar");
                 }}
                 size="small"
-                variant="contained">
-                <EditIcon></EditIcon>
-              </Button>;
-
-            item.buttom_delete = <Button onClick={() => {
-              deleteForId(item.id);
-            }}
-              size="small"
-              variant="contained">
-              <DeleteIcon></DeleteIcon>
-            </Button>;
+                variant="contained"
+              >
+                <EditIcon />
+              </Button>
+            );
+            
+            item.buttom_delete = (
+              <Button
+                onClick={() => {
+                  deleteForId(item.id);
+                }}
+                size="small"
+                variant="contained"
+              >
+                <DeleteIcon />
+              </Button>
+            );
           });
         });
         setLoading(false);
         setHotels(data);
       } catch (error) {
-        console.error('Erro ao buscar hotéis:', error);
+        console.error('Erro:', error);
       }
     };
 
@@ -108,7 +114,7 @@ const RoomAdmin: FC = () => {
       alertSucess(data.msg);
       show();
     } catch (error) {
-      alertError('Erro ao fazer a request');
+      alertError(error);
 
     } finally {
       clear();
@@ -144,23 +150,22 @@ const RoomAdmin: FC = () => {
     setOpen(false);
     setFormData({
       id: null,
-      name: '',
-      location: '',
-      image_url: ''
+      room_type: '',
+      number_of_rooms: '',
+      hotel_id: null
     });
   }
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+  }
   const handleClose = () => {
     setOpen(false)
     clear();
   };
 
   const handleChange = (e) => {
-
     const { name, value } = e.target;
-
-    //const file = event.target.files[0];
     const updatedValue = value;
 
     setFormData((prevData) => ({
@@ -186,24 +191,32 @@ const RoomAdmin: FC = () => {
             </div>
             <div>
               <Button onClick={() => {
+                setFormData((prevData) => ({
+                  ...prevData,
+                  ['hotel_id']: hotel.hotel_id,
+                }));
                 handleOpen();
                 setTitleModal("Inserir");
               }} variant="contained">+</Button>
             </div>
           </div>
-          <div className='content-table'>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TableBasic labelsHeader={labelsHeader} data={hotel.rooms}></TableBasic>
+          {
+            hotel.rooms.length > 0 ? (
+            <div  className='content-table'>
+            <Grid  container spacing={2}>
+              <Grid   item xs={12}>
+                <TableBasic  labelsHeader={labelsHeader} data={hotel.rooms}></TableBasic>
               </Grid>
             </Grid>
 
-          </div>
+          </div>) : (<p>Nada</p>) 
+          }
+          
         </div>
       ))}
 
 
-      {/* Modal Inserir */}
+      {/* Modal */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -220,37 +233,16 @@ const RoomAdmin: FC = () => {
                 justifyContent="center"
                 alignItems="center">
                 <Grid item xs={6}>
-                  <TextField onChange={handleChange} required name="name" value={formData.name} label="Nome" variant="outlined" fullWidth />
+                  <TextField onChange={handleChange} required name="room_type" value={formData.room_type} label="Tipo de Quarto" variant="outlined" fullWidth />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField onChange={handleChange} required name="location" value={formData.location} label="Endereço" variant="outlined" fullWidth />
+                  <TextField onChange={handleChange} required name="number_of_rooms" value={formData.number_of_rooms} label="Nº de Quartos" variant="outlined" fullWidth />
                 </Grid>
               </Grid>
 
-
-              <Grid container spacing={2}
-                justifyContent="center"
-                alignItems="center">
-                <Grid item xs={12}>
-                  <TextField
-                    type="file"
-                    label="Imagem"
-                    name="image_url"
-                    onChange={handleChange}
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    inputProps={{
-                      accept: 'image/*', // Aceita todos os tipos de imagens
-                    }}
-                    value={formData.image_url}
-                  />
-                </Grid>
-              </Grid>
-              <br /><br />
+              <br/><br/>
+              <br/><br/>
+              <br/><br/>
               <Grid container spacing={2}
                 justifyContent="space-around"
                 alignItems="end">

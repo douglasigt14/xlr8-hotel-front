@@ -19,7 +19,7 @@ const Admin: FC = () => {
     height={500}
   /> :
     <div className="conteiner-card">
-      <Typography variant="h4">Admin</Typography>
+      <Typography variant="h3">Admin CRUD</Typography>
       <br/>
       <Paper sx={{ minHeight: 700 }}>
           <Paper  elevation={3}>

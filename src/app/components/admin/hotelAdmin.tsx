@@ -196,7 +196,7 @@ const HotelAdmin: FC = () => {
       </div>
 
 
-      {/* Modal Inserir */}
+      {/* Modal */}
       <Modal
         open={open}
         onClose={handleClose}
