@@ -16,9 +16,9 @@ const PriceAdmin: FC = () => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
-    room_type: '',
-    number_of_rooms: '',
-    hotel_id: null
+    room_id: '',
+    stay_date: '',
+    price: ''
   });
   const [titleModal, setTitleModal] = useState("Inserir");
 
@@ -43,9 +43,9 @@ const PriceAdmin: FC = () => {
                     handleOpen();
                     setFormData({
                       id: item.id,
-                      room_type: item.room_type,
-                      number_of_rooms: item.number_of_rooms,
-                      hotel_id: hotel.id
+                      room_id: item.room_id,
+                      stay_date: item.stay_date,
+                      price: item.price
                     });
                     setTitleModal("Editar");
                   }}
@@ -85,7 +85,7 @@ const PriceAdmin: FC = () => {
     e.preventDefault();
 
 
-    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/rooms' : 'http://localhost:8081/api/rooms/' + formData.id;
+    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/prices' : 'http://localhost:8081/api/prices/' + formData.id;
     let METHOD = titleModal == "Inserir" ? 'POST' : 'PUT';
 
     try {
@@ -139,9 +139,9 @@ const PriceAdmin: FC = () => {
     setOpen(false);
     setFormData({
       id: null,
-      room_type: '',
-      number_of_rooms: '',
-      hotel_id: null
+      room_id: '',
+      stay_date: '',
+      price: ''
     });
   }
 
@@ -156,12 +156,13 @@ const PriceAdmin: FC = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const updatedValue = value;
+    let updatedValue = value;
 
     setFormData((prevData) => ({
       ...prevData,
       [name]: updatedValue,
     }));
+    console.log(formData);
   };
 
 
@@ -189,7 +190,7 @@ const PriceAdmin: FC = () => {
                     <Button onClick={() => {
                       setFormData((prevData) => ({
                         ...prevData,
-                        ['hotel_id']: hotel.id,
+                        ['room_id']: room.id,
                       }));
                       handleOpen();
                       setTitleModal("Inserir");
@@ -235,10 +236,10 @@ const PriceAdmin: FC = () => {
                 justifyContent="center"
                 alignItems="center">
                 <Grid item xs={6}>
-                  <TextField onChange={handleChange} required name="room_type" value={formData.room_type} label="Tipo de Quarto" variant="outlined" fullWidth />
+                  <TextField type="date" onChange={handleChange} required name="stay_date" value={formData.stay_date}  variant="outlined" fullWidth />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField onChange={handleChange} required name="number_of_rooms" value={formData.number_of_rooms} label="Nº de Quartos" variant="outlined" fullWidth />
+                  <TextField onChange={handleChange} required name="price" value={formData.price} label="Preço" variant="outlined" fullWidth />
                 </Grid>
               </Grid>
 
