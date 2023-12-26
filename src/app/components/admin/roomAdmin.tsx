@@ -5,6 +5,7 @@ import TableBasic from '../table';
 import { Box, Button, FormControl, Grid, Input, InputAdornment, Modal, Skeleton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import PaidIcon from '@mui/icons-material/Paid';
 import { alertError, alertSucess, alertWarning } from "../alerts";
 
 const styleModal = {
@@ -22,7 +23,7 @@ const styleModal = {
 
 const RoomAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
-  const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos", "Editar", "Apagar"];
+  const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos","Preços","Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = useState({
@@ -31,6 +32,7 @@ const RoomAdmin: FC = () => {
     number_of_rooms: '',
     hotel_id: null
   });
+  const [listPrices, setListPrices] = useState([]);
   const [titleModal, setTitleModal] = useState("Inserir");
 
 
@@ -40,7 +42,7 @@ const RoomAdmin: FC = () => {
   }, []);
 
   const show = () => {
-    const URL = 'http://localhost:8081/api/rooms';
+    const URL = 'http://localhost:8081/api/hotels/details';
     const fetchRequest = async () => {
       try {
         const response = await fetch(URL);
@@ -48,6 +50,20 @@ const RoomAdmin: FC = () => {
 
         data.forEach(hotel => {
           hotel.rooms.forEach(item => {
+            item.buttom_prices = (
+              <Button
+                onClick={() => {
+                  handleOpen();
+                  setListPrices(item.prices);
+                  setTitleModal("Preços");
+                }}
+                size="small"
+                variant="contained"
+              >
+                <PaidIcon />
+              </Button>
+            );
+
             item.buttom_edit = (
               <Button
                 onClick={() => {

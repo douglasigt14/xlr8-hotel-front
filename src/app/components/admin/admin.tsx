@@ -4,7 +4,6 @@ import React, { FC, useState, useEffect } from 'react';
 import { BottomNavigation, BottomNavigationAction,CardContent, Paper, Skeleton, Typography } from '@mui/material';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import HotelIcon from '@mui/icons-material/Hotel';
-import PaidIcon from '@mui/icons-material/Paid';
 import HotelAdmin from './hotelAdmin';
 import RoomAdmin from './roomAdmin';
 
