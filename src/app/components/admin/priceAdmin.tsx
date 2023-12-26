@@ -7,11 +7,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PaidIcon from '@mui/icons-material/Paid';
 import { alertError, alertSucess, alertWarning } from "../alerts";
-import {styleModal} from "../../styles/styles";
+import { styleModal } from "../../styles/styles";
 
 const PriceAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
-  const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos","Editar", "Apagar"];
+  const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos", "Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = useState(false);
   const [openPrices, setOpenPrices] = useState(false);
@@ -36,39 +36,41 @@ const PriceAdmin: FC = () => {
         const data = await response.json();
 
         data.forEach(hotel => {
-          hotel.rooms.forEach(item => {
-            item.buttom_edit = (
-              <Button
-                key={`edit-${item.id}`}
-                onClick={() => {
-                  handleOpen();
-                  setFormData({
-                    id: item.id,
-                    room_type: item.room_type,
-                    number_of_rooms: item.number_of_rooms,
-                    hotel_id: hotel.id
-                  });
-                  setTitleModal("Editar");
-                }}
-                size="small"
-                variant="contained"
-              >
-                <EditIcon />
-              </Button>
-            );
-            
-            item.buttom_delete = (
-              <Button
-                key={`buttom_delete-${item.id}`}
-                onClick={() => {
-                  deleteForId(item.id);
-                }}
-                size="small"
-                variant="contained"
-              >
-                <DeleteIcon />
-              </Button>
-            );
+          hotel.rooms.forEach(room => {
+            room.prices.forEach(item => {
+              item.buttom_edit = (
+                <Button
+                  key={`edit-${item.id}`}
+                  onClick={() => {
+                    handleOpen();
+                    setFormData({
+                      id: item.id,
+                      room_type: item.room_type,
+                      number_of_rooms: item.number_of_rooms,
+                      hotel_id: hotel.id
+                    });
+                    setTitleModal("Editar");
+                  }}
+                  size="small"
+                  variant="contained"
+                >
+                  <EditIcon />
+                </Button>
+              );
+
+              item.buttom_delete = (
+                <Button
+                  key={`buttom_delete-${item.id}`}
+                  onClick={() => {
+                    deleteForId(item.id);
+                  }}
+                  size="small"
+                  variant="contained"
+                >
+                  <DeleteIcon />
+                </Button>
+              );
+            });
           });
         });
         setLoading(false);
@@ -113,7 +115,7 @@ const PriceAdmin: FC = () => {
 
   const deleteForId = async (id) => {
     try {
-      const response = await fetch('http://localhost:8081/api/rooms/' + id, {
+      const response = await fetch('http://localhost:8081/api/prices/' + id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -179,48 +181,48 @@ const PriceAdmin: FC = () => {
     height={500}
   /> :
     <div className="content">
-     <Typography variant="h4">Preços</Typography>
-     <br/>
+      <Typography variant="h4">Preços</Typography>
+      <br />
       {hotels.map((hotel, index) => (
-          hotel.rooms.length > 0 ? 
-        <div key={index}>
-           <Typography variant="h5"><b>{hotel.name}</b></Typography>
-          {hotel.rooms.map((room, roomIndex) => (
+        hotel.rooms.length > 0 ?
+          <div key={index}>
+            <Typography variant="h5"><b>{hotel.name}</b></Typography>
+            {hotel.rooms.map((room, roomIndex) => (
 
-          
-            <div key={roomIndex}>
-              <div className='content-header'>
-                <div>
-                  <Typography variant="h6"><b>{room.room_type}</b></Typography>
-                </div>
-                <div>
-                  <Button onClick={() => {
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      ['hotel_id']: hotel.id,
-                    }));
-                    handleOpen();
-                    setTitleModal("Inserir");
-                  }} variant="contained">+</Button>
-                </div>
-              </div>
-              {
-               room.prices.length > 0 ? (
-                  <div className='content-table'>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <TableBasic labelsHeader={labelsHeader} data={room.prices}></TableBasic>
-                      </Grid>
-                    </Grid>
+
+              <div key={roomIndex}>
+                <div className='content-header'>
+                  <div>
+                    <Typography variant="h6"><b>{room.room_type}</b></Typography>
                   </div>
-                ) : (
-                  <p><i>*Nenhum Preço Cadastrado</i></p>
-                )
-              }
-            </div>
-          
-          ))}
-        </div>
+                  <div>
+                    <Button onClick={() => {
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        ['hotel_id']: hotel.id,
+                      }));
+                      handleOpen();
+                      setTitleModal("Inserir");
+                    }} variant="contained">+</Button>
+                  </div>
+                </div>
+                {
+                  room.prices.length > 0 ? (
+                    <div className='content-table'>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                          <TableBasic labelsHeader={labelsHeader} data={room.prices}></TableBasic>
+                        </Grid>
+                      </Grid>
+                    </div>
+                  ) : (
+                    <p><i>*Nenhum Preço Cadastrado</i></p>
+                  )
+                }
+              </div>
+
+            ))}
+          </div>
           : null
       ))}
 
@@ -250,9 +252,9 @@ const PriceAdmin: FC = () => {
                 </Grid>
               </Grid>
 
-              <br/><br/>
-              <br/><br/>
-              <br/><br/>
+              <br /><br />
+              <br /><br />
+              <br /><br />
               <Grid container spacing={2}
                 justifyContent="space-around"
                 alignItems="end">
