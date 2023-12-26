@@ -73,7 +73,7 @@ const RoomAdmin: FC = () => {
         setLoading(false);
         setHotels(data);
       } catch (error) {
-        console.error('Erro:', error);
+        alertError(error);
       }
     };
 
@@ -97,7 +97,6 @@ const RoomAdmin: FC = () => {
       });
 
       if (!response.ok) {
-        alertError('Erro ao fazer a request');
         throw new Error('Erro ao fazer a request');
       }
       const data = await response.json();
@@ -122,14 +121,13 @@ const RoomAdmin: FC = () => {
       });
 
       if (!response.ok) {
-        alertError('Erro ao fazer a request');
         throw new Error('Erro ao fazer a request');
       }
       const data = await response.json();
       alertWarning(data.msg);
       show();
     } catch (error) {
-      alertError('Erro ao fazer a request');
+      alertError(error);
 
     } finally {
       clear();

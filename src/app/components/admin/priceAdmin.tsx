@@ -74,7 +74,7 @@ const PriceAdmin: FC = () => {
         setLoading(false);
         setHotels(data);
       } catch (error) {
-        console.error('Erro:', error);
+        alertError(error);
       }
     };
 
@@ -98,7 +98,6 @@ const PriceAdmin: FC = () => {
       });
 
       if (!response.ok) {
-        alertError('Erro ao fazer a request');
         throw new Error('Erro ao fazer a request');
       }
       const data = await response.json();
@@ -123,14 +122,13 @@ const PriceAdmin: FC = () => {
       });
 
       if (!response.ok) {
-        alertError('Erro ao fazer a request');
         throw new Error('Erro ao fazer a request');
       }
       const data = await response.json();
       alertWarning(data.msg);
       show();
     } catch (error) {
-      alertError('Erro ao fazer a request');
+      alertError(error);
 
     } finally {
       clear();
@@ -181,39 +179,46 @@ const PriceAdmin: FC = () => {
     height={500}
   /> :
     <div className="content">
-      <Typography variant="h4">Preços</Typography>
-      {hotels.map((hotel, index) =>
-      (
+     <Typography variant="h4">Preços</Typography>
+     <br/>
+      {hotels.map((hotel, index) => (
         <div key={index}>
-          <div className='content-header'>
-            <div>
-              <Typography variant="h5">{hotel.name}</Typography>
+           <Typography variant="h5"><b>{hotel.name}</b></Typography>
+          {hotel.rooms.map((room, roomIndex) => (
+            <div key={roomIndex}>
+              <div className='content-header'>
+                <div>
+                  <Typography variant="h6"><b>{room.room_type}</b></Typography>
+                </div>
+                <div>
+                  <Button onClick={() => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      ['hotel_id']: hotel.id,
+                    }));
+                    handleOpen();
+                    setTitleModal("Inserir");
+                  }} variant="contained">+</Button>
+                </div>
+              </div>
+              {
+               room.prices.length > 0 ? (
+                  <div className='content-table'>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12}>
+                        <TableBasic labelsHeader={labelsHeader} data={room.prices}></TableBasic>
+                      </Grid>
+                    </Grid>
+                  </div>
+                ) : (
+                  <p><i>*Nenhum Preço Cadastrado</i></p>
+                )
+              }
             </div>
-            <div>
-              <Button onClick={() => {
-                setFormData((prevData) => ({
-                  ...prevData,
-                  ['hotel_id']: hotel.id,
-                }));
-                handleOpen();
-                setTitleModal("Inserir");
-              }} variant="contained">+</Button>
-            </div>
-          </div>
-          {
-            hotel.rooms.length > 0 ? (
-            <div  className='content-table'>
-            <Grid  container spacing={2}>
-              <Grid   item xs={12}>
-                <TableBasic  labelsHeader={labelsHeader} data={hotel.rooms}></TableBasic>
-              </Grid>
-            </Grid>
-
-          </div>) : (<p>Nada</p>) 
-          }
-          
+          ))}
         </div>
       ))}
+
 
 
       {/* Modal */}

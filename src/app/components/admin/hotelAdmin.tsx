@@ -63,7 +63,7 @@ const HotelAdmin: FC = () => {
         setLoading(false);
         setHotels(data);
       } catch (error) {
-        console.error('Erro ao buscar hotéis:', error);
+        alertError(error);
       }
     };
 
@@ -87,14 +87,13 @@ const HotelAdmin: FC = () => {
       });
 
       if (!response.ok) {
-        alertError('Erro ao fazer a request');
         throw new Error('Erro ao fazer a request');
       }
       const data = await response.json();
       alertSucess(data.msg);
       show();
     } catch (error) {
-      alertError('Erro ao fazer a request');
+      alertError(error);
 
     } finally {
       clear();
@@ -112,14 +111,13 @@ const HotelAdmin: FC = () => {
       });
 
       if (!response.ok) {
-        alertError('Erro ao fazer a request');
-        throw new Error('Erro ao fazer a request');
+        throw new Error("Error ao realizar a request");
       }
       const data = await response.json();
       alertWarning(data.msg);
       show();
     } catch (error) {
-      alertError('Erro ao fazer a request');
+      alertError(error);
 
     } finally {
       clear();
