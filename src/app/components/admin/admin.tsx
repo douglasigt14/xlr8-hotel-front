@@ -7,6 +7,7 @@ import HotelIcon from '@mui/icons-material/Hotel';
 import PaidIcon from '@mui/icons-material/Paid';
 import HotelAdmin from './hotelAdmin';
 import RoomAdmin from './roomAdmin';
+import PriceAdmin from './priceAdmin';
 
 
 const Admin: FC = () => {
@@ -30,13 +31,13 @@ const Admin: FC = () => {
                 setValue(newValue);
               }}
             >
-              <BottomNavigationAction label="Hotels" icon={<ApartmentIcon />} />
+              <BottomNavigationAction label="Hoteis" icon={<ApartmentIcon />} />
               <BottomNavigationAction label="Quartos" icon={<HotelIcon />} />
               <BottomNavigationAction label="Preços" icon={<PaidIcon />} />
           </BottomNavigation>
           </Paper>
           <CardContent>
-              {value == 0 ? <HotelAdmin></HotelAdmin> : value == 1 ? <RoomAdmin></RoomAdmin>: null}
+              {value == 0 ? <HotelAdmin/> : value == 1 ? <RoomAdmin/>: <PriceAdmin/>}
           </CardContent>
         
       </Paper>

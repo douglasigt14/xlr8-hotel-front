@@ -165,7 +165,7 @@ const HotelAdmin: FC = () => {
 
       <div className='content-header'>
         <div>
-          <Typography variant="h5">Lista de Hoteis</Typography>
+          <Typography variant="h5">Hoteis</Typography>
         </div>
         <div>
           <Button onClick={() => {

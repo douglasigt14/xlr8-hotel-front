@@ -9,7 +9,7 @@ import PaidIcon from '@mui/icons-material/Paid';
 import { alertError, alertSucess, alertWarning } from "../alerts";
 import {styleModal} from "../../styles/styles";
 
-const RoomAdmin: FC = () => {
+const PriceAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
   const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos","Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
@@ -46,7 +46,7 @@ const RoomAdmin: FC = () => {
                     id: item.id,
                     room_type: item.room_type,
                     number_of_rooms: item.number_of_rooms,
-                    hotel_id: hotel.hotel_id
+                    hotel_id: hotel.id
                   });
                   setTitleModal("Editar");
                 }}
@@ -181,7 +181,7 @@ const RoomAdmin: FC = () => {
     height={500}
   /> :
     <div className="content">
-      <Typography variant="h4">Lista de Quartos</Typography>
+      <Typography variant="h4">Preços</Typography>
       {hotels.map((hotel, index) =>
       (
         <div key={index}>
@@ -193,7 +193,7 @@ const RoomAdmin: FC = () => {
               <Button onClick={() => {
                 setFormData((prevData) => ({
                   ...prevData,
-                  ['hotel_id']: hotel.hotel_id,
+                  ['hotel_id']: hotel.id,
                 }));
                 handleOpen();
                 setTitleModal("Inserir");
@@ -264,4 +264,4 @@ const RoomAdmin: FC = () => {
   );
 };
 
-export default RoomAdmin;
+export default PriceAdmin;
