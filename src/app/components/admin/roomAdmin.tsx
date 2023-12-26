@@ -13,14 +13,12 @@ const RoomAdmin: FC = () => {
   const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos","Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
   const [open, setOpen] = useState(false);
-  const [openPrices, setOpenPrices] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
     room_type: '',
     number_of_rooms: '',
     hotel_id: null
   });
-  const [listPrices, setListPrices] = useState([]);
   const [titleModal, setTitleModal] = useState("Inserir");
 
   useEffect(() => {
@@ -153,13 +151,6 @@ const RoomAdmin: FC = () => {
   };
 
 
-  const handleOpenPrices = () => {
-    setOpenPrices(true);
-  }
-  const handleClosePrices = () => {
-    setOpenPrices(false)
-    clear();
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
