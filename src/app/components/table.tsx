@@ -46,7 +46,9 @@ export default function TableBasic({ data,  labelsHeader}) {
           {data.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((rowData, rowIndex) => (
             <TableRow key={rowIndex}>
               {headers.map((header) => (
-                <TableCell key={header}>{rowData[header]}</TableCell>
+                header !== "prices" && (
+                  <TableCell key={header}>{rowData[header]}</TableCell>
+                )
               ))}
             </TableRow>
           ))}

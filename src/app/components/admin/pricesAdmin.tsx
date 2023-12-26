@@ -5,77 +5,76 @@ import TableBasic from '../table';
 import { Box, Button, FormControl, Grid, Input, InputAdornment, Modal, Skeleton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import PaidIcon from '@mui/icons-material/Paid';
 import { alertError, alertSucess, alertWarning } from "../alerts";
+import {styleModal} from "../../styles/styles";
 
-const styleModal = {
-  position: 'absolute' as 'absolute',
-  top: '30%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  height: 300,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
-
-const HotelAdmin: FC = () => {
+const RoomAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
-  const labelsHeader = ["#", "Nome", "Endereço", "Imagem", "Editar", "Apagar"];
+  const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos","Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [openPrices, setOpenPrices] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
-    name: '',
-    location: '',
-    image_url: ''
+    room_type: '',
+    number_of_rooms: '',
+    hotel_id: null
   });
+  const [listPrices, setListPrices] = useState([]);
   const [titleModal, setTitleModal] = useState("Inserir");
-
-
 
   useEffect(() => {
     show();
   }, []);
 
   const show = () => {
-    const URL = 'http://localhost:8081/api/hotels';
+    const URL = 'http://localhost:8081/api/hotels/details';
     const fetchRequest = async () => {
       try {
         const response = await fetch(URL);
         const data = await response.json();
 
-        data.forEach(item => {
-          item.buttom_edit = 
-          <Button 
-          onClick={() => {
-            handleOpen();
-            setFormData({
-              id: item.id,
-              name: item.name,
-              location: item.location,
-              image_url: ''
-            });
-            setTitleModal("Editar");
-          }}
-          size="small" 
-          variant="contained">
-            <EditIcon></EditIcon> 
-          </Button>;
-
-          item.buttom_delete = <Button onClick={() => {
-            deleteForId(item.id);
-          }}
-            size="small"
-            variant="contained">
-            <DeleteIcon></DeleteIcon>
-          </Button>;
+        data.forEach(hotel => {
+          hotel.rooms.forEach(item => {
+            item.buttom_edit = (
+              <Button
+                key={`edit-${item.id}`}
+                onClick={() => {
+                  handleOpen();
+                  setFormData({
+                    id: item.id,
+                    room_type: item.room_type,
+                    number_of_rooms: item.number_of_rooms,
+                    hotel_id: hotel.hotel_id
+                  });
+                  setTitleModal("Editar");
+                }}
+                size="small"
+                variant="contained"
+              >
+                <EditIcon />
+              </Button>
+            );
+            
+            item.buttom_delete = (
+              <Button
+                key={`buttom_delete-${item.id}`}
+                onClick={() => {
+                  deleteForId(item.id);
+                }}
+                size="small"
+                variant="contained"
+              >
+                <DeleteIcon />
+              </Button>
+            );
+          });
         });
         setLoading(false);
         setHotels(data);
       } catch (error) {
-        console.error('Erro ao buscar hotéis:', error);
+        console.error('Erro:', error);
       }
     };
 
@@ -84,9 +83,9 @@ const HotelAdmin: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
- 
 
-    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/hotels' : 'http://localhost:8081/api/hotels/'+formData.id;
+
+    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/rooms' : 'http://localhost:8081/api/rooms/' + formData.id;
     let METHOD = titleModal == "Inserir" ? 'POST' : 'PUT';
 
     try {
@@ -106,7 +105,7 @@ const HotelAdmin: FC = () => {
       alertSucess(data.msg);
       show();
     } catch (error) {
-      alertError('Erro ao fazer a request');
+      alertError(error);
 
     } finally {
       clear();
@@ -115,7 +114,7 @@ const HotelAdmin: FC = () => {
 
   const deleteForId = async (id) => {
     try {
-      const response = await fetch('http://localhost:8081/api/hotels/' + id, {
+      const response = await fetch('http://localhost:8081/api/rooms/' + id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -142,23 +141,31 @@ const HotelAdmin: FC = () => {
     setOpen(false);
     setFormData({
       id: null,
-      name: '',
-      location: '',
-      image_url: ''
+      room_type: '',
+      number_of_rooms: '',
+      hotel_id: null
     });
   }
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+  }
   const handleClose = () => {
     setOpen(false)
     clear();
   };
 
+
+  const handleOpenPrices = () => {
+    setOpenPrices(true);
+  }
+  const handleClosePrices = () => {
+    setOpenPrices(false)
+    clear();
+  };
+
   const handleChange = (e) => {
-
     const { name, value } = e.target;
-
-    //const file = event.target.files[0];
     const updatedValue = value;
 
     setFormData((prevData) => ({
@@ -174,26 +181,39 @@ const HotelAdmin: FC = () => {
     height={500}
   /> :
     <div className="content">
+      <Typography variant="h4">Lista de Quartos</Typography>
+      {hotels.map((hotel, index) =>
+      (
+        <div key={index}>
+          <div className='content-header'>
+            <div>
+              <Typography variant="h5">{hotel.name}</Typography>
+            </div>
+            <div>
+              <Button onClick={() => {
+                setFormData((prevData) => ({
+                  ...prevData,
+                  ['hotel_id']: hotel.hotel_id,
+                }));
+                handleOpen();
+                setTitleModal("Inserir");
+              }} variant="contained">+</Button>
+            </div>
+          </div>
+          {
+            hotel.rooms.length > 0 ? (
+            <div  className='content-table'>
+            <Grid  container spacing={2}>
+              <Grid   item xs={12}>
+                <TableBasic  labelsHeader={labelsHeader} data={hotel.rooms}></TableBasic>
+              </Grid>
+            </Grid>
 
-      <div className='content-header'>
-        <div>
-          <Typography variant="h5">Lista de Hoteis</Typography>
+          </div>) : (<p>Nada</p>) 
+          }
+          
         </div>
-        <div>
-          <Button onClick={() => {
-            handleOpen();
-            setTitleModal("Inserir");
-          }} variant="contained">+</Button>
-        </div>
-      </div>
-      <div className='content-table'>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TableBasic labelsHeader={labelsHeader} data={hotels}></TableBasic>
-          </Grid>
-        </Grid>
-
-      </div>
+      ))}
 
 
       {/* Modal */}
@@ -213,37 +233,16 @@ const HotelAdmin: FC = () => {
                 justifyContent="center"
                 alignItems="center">
                 <Grid item xs={6}>
-                  <TextField onChange={handleChange} required name="name" value={formData.name} label="Nome" variant="outlined" fullWidth />
+                  <TextField onChange={handleChange} required name="room_type" value={formData.room_type} label="Tipo de Quarto" variant="outlined" fullWidth />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField onChange={handleChange} required name="location" value={formData.location} label="Endereço" variant="outlined" fullWidth />
+                  <TextField onChange={handleChange} required name="number_of_rooms" value={formData.number_of_rooms} label="Nº de Quartos" variant="outlined" fullWidth />
                 </Grid>
               </Grid>
 
-
-              <Grid container spacing={2}
-                justifyContent="center"
-                alignItems="center">
-                <Grid item xs={12}>
-                  <TextField
-                    type="file"
-                    label="Imagem"
-                    name="image_url"
-                    onChange={handleChange}
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    inputProps={{
-                      accept: 'image/*', // Aceita todos os tipos de imagens
-                    }}
-                    value={formData.image_url}
-                  />
-                </Grid>
-              </Grid>
-              <br /><br />
+              <br/><br/>
+              <br/><br/>
+              <br/><br/>
               <Grid container spacing={2}
                 justifyContent="space-around"
                 alignItems="end">
@@ -265,4 +264,4 @@ const HotelAdmin: FC = () => {
   );
 };
 
-export default HotelAdmin;
+export default RoomAdmin;

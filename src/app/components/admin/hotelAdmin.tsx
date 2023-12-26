@@ -6,19 +6,7 @@ import { Box, Button, FormControl, Grid, Input, InputAdornment, Modal, Skeleton,
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { alertError, alertSucess, alertWarning } from "../alerts";
-
-const styleModal = {
-  position: 'absolute' as 'absolute',
-  top: '30%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  height: 300,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import {styleModal} from "../../styles/styles";
 
 const HotelAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);

@@ -4,6 +4,7 @@ import React, { FC, useState, useEffect } from 'react';
 import { BottomNavigation, BottomNavigationAction,CardContent, Paper, Skeleton, Typography } from '@mui/material';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import HotelIcon from '@mui/icons-material/Hotel';
+import PaidIcon from '@mui/icons-material/Paid';
 import HotelAdmin from './hotelAdmin';
 import RoomAdmin from './roomAdmin';
 
@@ -31,6 +32,7 @@ const Admin: FC = () => {
             >
               <BottomNavigationAction label="Hotels" icon={<ApartmentIcon />} />
               <BottomNavigationAction label="Quartos" icon={<HotelIcon />} />
+              <BottomNavigationAction label="Preços" icon={<PaidIcon />} />
           </BottomNavigation>
           </Paper>
           <CardContent>

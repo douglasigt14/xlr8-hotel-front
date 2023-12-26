@@ -7,25 +7,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PaidIcon from '@mui/icons-material/Paid';
 import { alertError, alertSucess, alertWarning } from "../alerts";
-
-const styleModal = {
-  position: 'absolute' as 'absolute',
-  top: '30%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  height: 300,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import {styleModal} from "../../styles/styles";
 
 const RoomAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
-  const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos","Preços","Editar", "Apagar"];
+  const labelsHeader = ["#", "Tipo de Quarto", "Nº de Quartos","Editar", "Apagar"];
   const [hotels, setHotels] = useState([]);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [openPrices, setOpenPrices] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
     room_type: '',
@@ -34,8 +23,6 @@ const RoomAdmin: FC = () => {
   });
   const [listPrices, setListPrices] = useState([]);
   const [titleModal, setTitleModal] = useState("Inserir");
-
-
 
   useEffect(() => {
     show();
@@ -50,22 +37,9 @@ const RoomAdmin: FC = () => {
 
         data.forEach(hotel => {
           hotel.rooms.forEach(item => {
-            item.buttom_prices = (
-              <Button
-                onClick={() => {
-                  handleOpen();
-                  setListPrices(item.prices);
-                  setTitleModal("Preços");
-                }}
-                size="small"
-                variant="contained"
-              >
-                <PaidIcon />
-              </Button>
-            );
-
             item.buttom_edit = (
               <Button
+                key={`edit-${item.id}`}
                 onClick={() => {
                   handleOpen();
                   setFormData({
@@ -85,6 +59,7 @@ const RoomAdmin: FC = () => {
             
             item.buttom_delete = (
               <Button
+                key={`buttom_delete-${item.id}`}
                 onClick={() => {
                   deleteForId(item.id);
                 }}
@@ -177,6 +152,15 @@ const RoomAdmin: FC = () => {
   }
   const handleClose = () => {
     setOpen(false)
+    clear();
+  };
+
+
+  const handleOpenPrices = () => {
+    setOpenPrices(true);
+  }
+  const handleClosePrices = () => {
+    setOpenPrices(false)
     clear();
   };
 
