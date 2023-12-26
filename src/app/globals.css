@@ -35,5 +35,5 @@ body{
   padding: 1rem;
 }
 .swal2-container {
-  z-index: 10000 !important; /* Ajuste o valor conforme necessário */
+  z-index: 10000 !important; 
 }

@@ -11,32 +11,29 @@ import {
 } from '@mui/material';
 
 export default function TableBasic({ data,  labelsHeader}) {
-  // Estado para controlar a página atual e a quantidade de itens por página
+
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10); // você pode ajustar isso conforme necessário
-  // Verifica se há dados para exibição
+  const [rowsPerPage, setRowsPerPage] = useState(10); 
+
   if (data.length === 0) {
     return <div></div>;
   }
 
-  // Obtém as chaves do primeiro objeto para usar como cabeçalhos dinâmicos
   const headers = Object.keys(data[0]);
   let headerCells: any[] = [];
   labelsHeader.forEach((label) => {
     headerCells.push(<TableCell key={label}>{label}</TableCell>);
   });
 
-  
 
-  // Função para lidar com a mudança de página
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
-  // Função para lidar com a mudança do número de itens por página
+
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // resetar a página ao alterar o número de itens por página
+    setPage(0);
   };
 
   return (
