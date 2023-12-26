@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PaidIcon from '@mui/icons-material/Paid';
 import { alertError, alertSucess, alertWarning } from "../alerts";
 import { styleModal } from "../../styles/styles";
+import {env}  from "../../env";
 
 const PriceAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
@@ -27,7 +28,7 @@ const PriceAdmin: FC = () => {
   }, []);
 
   const show = () => {
-    const URL = 'http://localhost:8081/api/hotels/details';
+    const URL = env.backend+'/api/hotels/details';
     const fetchRequest = async () => {
       try {
         const response = await fetch(URL);
@@ -85,7 +86,7 @@ const PriceAdmin: FC = () => {
     e.preventDefault();
 
 
-    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/prices' : 'http://localhost:8081/api/prices/' + formData.id;
+    let URL = titleModal == "Inserir" ? env.backend+'/api/prices' : env.backend+'/api/prices/' + formData.id;
     let METHOD = titleModal == "Inserir" ? 'POST' : 'PUT';
 
     try {
@@ -113,7 +114,7 @@ const PriceAdmin: FC = () => {
 
   const deleteForId = async (id) => {
     try {
-      const response = await fetch('http://localhost:8081/api/prices/' + id, {
+      const response = await fetch(env.backend+'/api/prices/' + id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

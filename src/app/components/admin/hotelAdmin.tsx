@@ -6,7 +6,8 @@ import { Box, Button, FormControl, Grid, Input, InputAdornment, Modal, Skeleton,
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { alertError, alertSucess, alertWarning } from "../alerts";
-import {styleModal} from "../../styles/styles";
+import { styleModal } from "../../styles/styles";
+import { env } from "../../env";
 
 const HotelAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
@@ -17,7 +18,8 @@ const HotelAdmin: FC = () => {
     id: null,
     name: '',
     location: '',
-    image_url: ''
+    image_url: '',
+    file: '',
   });
   const [titleModal, setTitleModal] = useState("Inserir");
 
@@ -28,29 +30,38 @@ const HotelAdmin: FC = () => {
   }, []);
 
   const show = () => {
-    const URL = 'http://localhost:8081/api/hotels';
+    const URL = env.backend + '/api/hotels';
     const fetchRequest = async () => {
       try {
         const response = await fetch(URL);
         const data = await response.json();
 
         data.forEach(item => {
-          item.buttom_edit = 
-          <Button 
-          onClick={() => {
-            handleOpen();
-            setFormData({
-              id: item.id,
-              name: item.name,
-              location: item.location,
-              image_url: ''
-            });
-            setTitleModal("Editar");
-          }}
-          size="small" 
-          variant="contained">
-            <EditIcon></EditIcon> 
-          </Button>;
+          item.image_url = (
+            <img
+              src={`${env.backend}/${item.image_url}`}
+              alt={item.name}
+              style={{ maxWidth: '100%', maxHeight: '80px' }}
+              loading="lazy"
+            />
+          );
+          item.buttom_edit =
+            <Button
+              onClick={() => {
+                handleOpen();
+                setFormData({
+                  id: item.id,
+                  name: item.name,
+                  location: item.location,
+                  image_url: item.image_url,
+                  file: '',
+                });
+                setTitleModal("Editar");
+              }}
+              size="small"
+              variant="contained">
+              <EditIcon></EditIcon>
+            </Button>;
 
           item.buttom_delete = <Button onClick={() => {
             deleteForId(item.id);
@@ -72,29 +83,34 @@ const HotelAdmin: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
- 
 
-    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/hotels' : 'http://localhost:8081/api/hotels/'+formData.id;
-    let METHOD = titleModal == "Inserir" ? 'POST' : 'PUT';
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('location', formData.location);
+    formDataToSend.append('image_url', formData.file);
+
+
+    let URL =
+      titleModal === 'Inserir'
+        ? env.backend + '/api/hotels'
+        : env.backend + '/api/hotels/' + formData.id;
+    let METHOD = titleModal === 'Inserir' ? 'POST' : 'PUT';
 
     try {
       const response = await fetch(URL, {
         method: METHOD,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       if (!response.ok) {
         throw new Error('Erro ao fazer a request');
       }
+
       const data = await response.json();
       alertSucess(data.msg);
       show();
     } catch (error) {
       alertError(error);
-
     } finally {
       clear();
     }
@@ -102,7 +118,7 @@ const HotelAdmin: FC = () => {
 
   const deleteForId = async (id) => {
     try {
-      const response = await fetch('http://localhost:8081/api/hotels/' + id, {
+      const response = await fetch(env.backend + '/api/hotels/' + id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -130,27 +146,33 @@ const HotelAdmin: FC = () => {
       id: null,
       name: '',
       location: '',
-      image_url: ''
+      image_url: '',
+      file: '',
     });
   }
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setOpen(false)
     clear();
+    setOpen(false)
   };
 
   const handleChange = (e) => {
+    const { name, value, files } = e.target;
 
-    const { name, value } = e.target;
-
-    //const file = event.target.files[0];
-    const updatedValue = value;
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: updatedValue,
-    }));
+    if (name === 'image_url') {
+      setFormData((prevData) => ({
+        ...prevData,
+        file: files[0],
+        image_url: URL.createObjectURL(files[0]), // Exibe uma visualização da imagem no input (opcional)
+      }));
+    } else {
+      const updatedValue = value;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: updatedValue,
+      }));
+    }
   };
 
 
@@ -158,7 +180,7 @@ const HotelAdmin: FC = () => {
     variant="rectangular"
     width="100%"
     height={500}
-  /> :
+  /> : (hotels.length > 0 ?
     <div className="content">
 
       <div className='content-header'>
@@ -193,7 +215,7 @@ const HotelAdmin: FC = () => {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {titleModal}
           </Typography>
-          <form onSubmit={handleSubmit} className='body-modal'>
+          <form onSubmit={handleSubmit} className='body-modal' encType="multipart/form-data">
             <FormControl fullWidth>
               <Grid container spacing={2}
                 justifyContent="center"
@@ -225,8 +247,11 @@ const HotelAdmin: FC = () => {
                     inputProps={{
                       accept: 'image/*', // Aceita todos os tipos de imagens
                     }}
-                    value={formData.image_url}
                   />
+
+                  {formData.image_url && typeof formData.image_url === 'string' ? (
+                    <img src={formData.image_url} alt="Preview" style={{ maxWidth: '100%', maxHeight: '80px' }} />
+                  ) : formData.image_url}
                 </Grid>
               </Grid>
               <br /><br />
@@ -244,7 +269,15 @@ const HotelAdmin: FC = () => {
           </form>
         </Box>
       </Modal>
-    </div>
+    </div> :
+    <Grid container spacing={2}
+      justifyContent="center"
+      alignItems="Center">
+      <Button onClick={() => {
+        handleOpen();
+        setTitleModal("Inserir");
+      }} variant="contained">Inserir Hotel</Button>
+    </Grid>)
   );
   return (
     result

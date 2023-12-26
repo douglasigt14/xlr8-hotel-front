@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { alertError, alertSucess, alertWarning } from "../alerts";
 import {styleModal} from "../../styles/styles";
+import {env}  from "../../env";
 
 const RoomAdmin: FC = () => {
   const [loadding, setLoading] = useState(true);
@@ -26,7 +27,7 @@ const RoomAdmin: FC = () => {
   }, []);
 
   const show = () => {
-    const URL = 'http://localhost:8081/api/hotels/details';
+    const URL = env.backend+'/api/hotels/details';
     const fetchRequest = async () => {
       try {
         const response = await fetch(URL);
@@ -82,7 +83,7 @@ const RoomAdmin: FC = () => {
     e.preventDefault();
 
 
-    let URL = titleModal == "Inserir" ? 'http://localhost:8081/api/rooms' : 'http://localhost:8081/api/rooms/' + formData.id;
+    let URL = titleModal == "Inserir" ? env.backend+'/api/rooms' : env.backend+'/api/rooms/' + formData.id;
     let METHOD = titleModal == "Inserir" ? 'POST' : 'PUT';
 
     try {
@@ -110,7 +111,7 @@ const RoomAdmin: FC = () => {
 
   const deleteForId = async (id) => {
     try {
-      const response = await fetch('http://localhost:8081/api/rooms/' + id, {
+      const response = await fetch(env.backend+'/api/rooms/' + id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
