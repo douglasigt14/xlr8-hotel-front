@@ -180,8 +180,11 @@ const HotelAdmin: FC = () => {
     variant="rectangular"
     width="100%"
     height={500}
-  /> : (hotels.length > 0 ?
-    <div className="content">
+  /> : 
+   
+   <div className="content">
+        
+      {( hotels.length > 0 ? 
 
       <div className='content-header'>
         <div>
@@ -194,6 +197,25 @@ const HotelAdmin: FC = () => {
           }} variant="contained">+</Button>
         </div>
       </div>
+    :
+    <Grid container spacing={2}
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      width="100%"
+      height={500}
+      >
+       <Typography variant="h6" component="h2">
+            Você não tem nenhum Hotel, casdastre primeiro para poder cadastrar quartos.
+          </Typography>
+          <br/>
+      <Button onClick={() => {
+        handleOpen();
+        setTitleModal("Inserir");
+      }} variant="contained">Inserir Hotel</Button>
+    </Grid>)}
+
+
       <div className='content-table'>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -204,7 +226,6 @@ const HotelAdmin: FC = () => {
       </div>
 
 
-      {/* Modal */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -269,15 +290,10 @@ const HotelAdmin: FC = () => {
           </form>
         </Box>
       </Modal>
-    </div> :
-    <Grid container spacing={2}
-      justifyContent="center"
-      alignItems="Center">
-      <Button onClick={() => {
-        handleOpen();
-        setTitleModal("Inserir");
-      }} variant="contained">Inserir Hotel</Button>
-    </Grid>)
+
+      
+    </div> 
+    
   );
   return (
     result

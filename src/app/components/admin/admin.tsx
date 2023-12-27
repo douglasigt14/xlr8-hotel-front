@@ -32,7 +32,7 @@ const Admin: FC = () => {
               }}
             >
               <BottomNavigationAction label="Hoteis" icon={<ApartmentIcon />} />
-              <BottomNavigationAction disabled={true} label="Quartos" icon={<HotelIcon />} />
+              <BottomNavigationAction label="Quartos" icon={<HotelIcon />} />
               <BottomNavigationAction label="Preços" icon={<PaidIcon />} />
           </BottomNavigation>
           </Paper>

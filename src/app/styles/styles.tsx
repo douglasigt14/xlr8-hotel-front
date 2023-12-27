@@ -10,11 +10,4 @@ export const styleModal = {
     boxShadow: 24,
     p: 4,
   };
-
-  export const styleEmptyState = {
-    width: 800,
-    minHeight: 600,
-    p: 4,
-  };
-
   
