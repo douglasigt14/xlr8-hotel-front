@@ -1,49 +1,37 @@
 // HotelLandingPage.js
 import React, { useState } from 'react';
-import TextField from '@mui/material/TextField';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import DatePicker from '@mui/lab/DatePicker';
-import { Grid, Typography } from '@mui/material';
+import { Box, Divider, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { styleHotelsList, styleTextList } from '@/app/styles/styles';
+import { SafetyDivider } from '@mui/icons-material';
 
 const HotelLandingPage = ({ hotels }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    // Adicione a lógica para buscar tipos de quartos disponíveis e preços para a data selecionada
   };
 
   return (
     <div>
-
-      {/* Lista de Hotéis */}
+      <br /><br />
       <Grid container spacing={2}>
-        {/* Mapeie sua lista de hotéis */}
-        {hotels.map((hotel) => (
-          <Grid item xs={12} key={hotel.id}>
-            <Typography variant="h4" gutterBottom>
-              {hotel.name}
-            </Typography>
+        <Grid item xs={12}>
+          <Box sx={styleHotelsList}>
+            <Divider />
+            {hotels.map((hotel, index) => (
+              <nav>
+                <List>
 
-            {/* Seletor de Data */}
-            <DatePicker
-              label="Selecione a Data"
-              value={selectedDate}
-              onChange={handleDateChange}
-              renderInput={(params) => <TextField {...params} />}
-            />
+                  <ListItem key={index}>
+                      <ListItemText secondary="Quartos Disponíveis"><span style={styleTextList}>{hotel.name}</span> </ListItemText>
+                  </ListItem>
+                </List>
+                <Divider />
+              </nav>
+            ))}
 
-            {/* Exibir tipos de quartos disponíveis e preços */}
-            {selectedDate && (
-              <div>
-                <Typography variant="h6" gutterBottom>
-                  Tipos de Quartos Disponíveis e Preços:
-                </Typography>
-                {/* Adicione a lógica para exibir tipos de quartos e preços */}
-              </div>
-            )}
-          </Grid>
-        ))}
+          </Box>
+        </Grid>
       </Grid>
     </div>
   );
