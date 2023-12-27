@@ -37,14 +37,7 @@ const HotelAdmin: FC = () => {
         const data = await response.json();
 
         data.forEach(item => {
-          item.image_url = (
-            <img
-              src={`${env.backend}/${item.image_url}`}
-              alt={item.name}
-              style={{ maxWidth: '100%', maxHeight: '80px' }}
-              loading="lazy"
-            />
-          );
+          
           item.buttom_edit =
             <Button
               onClick={() => {
@@ -70,7 +63,18 @@ const HotelAdmin: FC = () => {
             variant="contained">
             <DeleteIcon></DeleteIcon>
           </Button>;
-        });
+
+        if(item.image_url){
+          item.image_url = (
+            <img
+              src={`${env.backend}/${item.image_url}`}
+              alt={item.name}
+              style={{ maxWidth: '100%', maxHeight: '80px' }}
+              loading="lazy"
+            />
+          );
+        }
+      });
         setLoading(false);
         setHotels(data);
       } catch (error) {
@@ -87,8 +91,11 @@ const HotelAdmin: FC = () => {
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     formDataToSend.append('location', formData.location);
-    formDataToSend.append('image_url', formData.file);
+    if (typeof formData.file !== 'string' && formData.file !== '') {
+      formDataToSend.append('image_url', formData.file);
+    }
 
+   
 
     let URL =
       titleModal === 'Inserir'
@@ -96,9 +103,15 @@ const HotelAdmin: FC = () => {
         : env.backend + '/api/hotels/' + formData.id;
     let METHOD = titleModal === 'Inserir' ? 'POST' : 'PUT';
 
+    if(METHOD == 'PUT'){
+      formDataToSend.append('_method', 'PUT');
+    }
+
+   
+    
     try {
       const response = await fetch(URL, {
-        method: METHOD,
+        method: 'POST',
         body: formDataToSend,
       });
 
