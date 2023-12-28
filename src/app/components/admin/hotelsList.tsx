@@ -1,6 +1,6 @@
 // HotelLandingPage.js
 import React, { useState } from 'react';
-import { Box, Divider, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { Box, Divider, Grid, InputAdornment, List, ListItem, ListItemButton, ListItemIcon, ListItemText, TextField, Typography } from '@mui/material';
 import { styleHotelsList, styleTextList } from '@/app/styles/styles';
 import { env } from "../../env";
 
@@ -23,28 +23,46 @@ const HotelLandingPage = ({ hotels }) => {
                 <List>
 
                   <ListItem key={index}>
-                      <ListItemText secondary="Quartos Disponíveis">
+                    <ListItemText>
 
-                      <Grid container spacing={2} 
-                          justifyContent="space-between"
-                           alignItems="center"
-                          width="100%">
-                        <Grid item xs={11}>
-                          <span style={styleTextList}>{hotel.name}</span> 
+                      <Grid container spacing={2}
+                        justifyContent="flex-start"
+                        alignItems="flex-start"
+                        width="100%">
+                        <Grid item xs={7}>
+                          <span style={styleTextList}>{hotel.id} - {hotel.name}</span><br/>
+                          {hotel.location}
                         </Grid>
-                      {(
-                         hotel.image_url ? 
-                            <Grid item xs={1} justifyContent="flex-end">
-                            <img
-                              src={`${env.backend}/${hotel.image_url}`}
-                              alt={hotel.name}
-                              style={{ maxWidth: '100%', maxHeight: '80px' }}
-                              loading="lazy"/>
-                              </Grid>
-                            : null
-                         )}
-                         </Grid>
-                      </ListItemText>
+                        <Grid item xs={2} justifyContent="flex-start">
+                          {(
+                            hotel.image_url ?
+                              (
+
+                                <img
+                                  src={`${env.backend}/${hotel.image_url}`}
+                                  alt={hotel.name}
+                                  style={{ maxWidth: '100%', maxHeight: '80px' }}
+                                  loading="lazy" />)
+
+                              : null
+                          )}
+                        </Grid>
+                        <Grid item xs={2} justifyContent="flex-start">
+                          <TextField fullWidth
+                            type="date"
+                            label="data"
+                            size="small"
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                    </ListItemText>
                   </ListItem>
                 </List>
                 <Divider />
